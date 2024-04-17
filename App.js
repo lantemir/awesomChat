@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
 import './src/core/fontawesome';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/Splash';
 import SignUpScreen from './src/screens/SignUp';
@@ -13,15 +13,23 @@ import SearchScreen from './src/screens/Search';
 import MessageScreen from './src/screens/Message';
 import { useState } from 'react';
 
+const LightTheme  ={
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'white'
+  }
+}
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
 
   const [initialized] = useState(true)
-  const [authenticated] = useState(true)
+  const [authenticated] = useState(false)
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={LightTheme}>
       <StatusBar barStyle='dark-content' />
       <Stack.Navigator>
         {!initialized ? (

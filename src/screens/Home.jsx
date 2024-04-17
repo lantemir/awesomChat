@@ -1,5 +1,5 @@
 import { useLayoutEffect } from "react";
-import { SafeAreaView, Text, Touchable, TouchableOpacity } from "react-native";
+import { SafeAreaView, Text, Touchable, TouchableOpacity, View, Image } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import RequestsScreen from "./Requests";
@@ -22,6 +22,13 @@ function HomeScreen ({navigation}) {
     return(
       <Tab.Navigator
         screenOptions={({route, navigation}) => ({
+          headerLeft: () => (
+            <View style={{marginLeft: 16, borderRadius: 24, backgroundColor: '#e0e0e0'}}>
+              <Image source={require('../assets/user.png')} 
+                style={{width: 28, height: 28 }}
+              />
+            </View>
+          ),
           headerRight: () =>(
             <TouchableOpacity>
               <FontAwesomeIcon style={{marginRight: 16}} icon='magnifying-glass' size={22} color='#404040'/>
