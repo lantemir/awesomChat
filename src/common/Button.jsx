@@ -1,8 +1,8 @@
 import { Text, TouchableOpacity } from "react-native";
 
 
-function Button({title}) {
-    return(
+function Button({ title, onPress }) {
+    return (
         <TouchableOpacity style={{
             backgroundColor: '#202020',
             height: 52,
@@ -10,9 +10,11 @@ function Button({title}) {
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: 20,
-        }}>
+        }}
+            onPress={onPress}
+        >
             <Text style={{
-                color:'white',
+                color: 'white',
                 fontSize: 16,
                 fontWeight: 'bold'
             }}>

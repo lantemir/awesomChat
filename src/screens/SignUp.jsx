@@ -1,9 +1,22 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
 import Input from "../common/Input";
 import Button from "../common/Button";
 
 function SignUpScreen ({navigation}) {
+
+    const [username, setUsername] = useState('')
+    const [firstName, setfirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [password1, setpassword1] = useState('')
+    const [password2, setpassword2] = useState('')
+
+
+    const [usernameError, setUsernameError] = useState('')
+    const [firstNameError, setFirstNameError] = useState('')
+    const [lastNameError, setLastNameError] = useState('')
+    const [password1Error, setPassword1Error] = useState('')
+    const [password2Error, setPassword2Error] = useState('')
 
     useLayoutEffect(() =>{
         navigation.setOptions({
@@ -11,19 +24,53 @@ function SignUpScreen ({navigation}) {
             })
     },[])
 
+    const onSignUp = () => {
+
+        const failUsername = !username || username.length < 5
+        if (failUsername) {
+            setUsernameError('Username must be > 5 charecters')
+        }
+
+        const failFirstName = !firstName 
+        if (failFirstName) {
+            setFirstNameError('First name was not provided')
+        }
+
+        const failLastName = !lastName 
+        if (failLastName) {
+            setLastNameError('Last name was not provided')
+        }
+
+        const failPassword1 = !password1 || password1.length < 8
+        if (failPassword1) {
+            setPassword1Error('Password is too short')
+        }
+
+        const failPassword2 = password1 !== password2 
+        if (failPassword2) {
+            setPassword2Error('Password1 don\'t match')
+        }
+
+        if(failUsername, failFirstName, failLastName, failPassword1, failPassword2){
+            return 
+        }
+
+        console.log("onSignUp")
+    }
+
     return(
         <SafeAreaView style={{flex: 1}}> 
            <View style={{flex:1, justifyContent: 'center', paddingHorizontal: 16}}>
                 <Text style={{textAlign:'center', marginBottom: 24, fontSize:36, fontWeight: 'bold'}}>
                     Sign Up
                 </Text>
-                <Input title='Username' />
-                <Input title='First Name' />
-                <Input title='Last Name' />
-                <Input title='Password' />
-                <Input title='Retype Password' />
+                <Input title='Username' value={username} error={usernameError} setValue={setUsername} setError={setUsernameError}/>
+                <Input title='First Name' value={firstName} error={firstNameError} setValue={setfirstName} setError={setFirstNameError}/>
+                <Input title='Last Name' value={lastName} error={lastNameError} setValue={setLastName} setError={setLastNameError} />
+                <Input title='Password' value={password1} error={password1Error} setValue={setpassword1} setError={setPassword1Error} secureTextEntry={true}/>
+                <Input title='Retype Password' value={password2} error={password2Error} setValue={setpassword2} setError={setPassword2Error} secureTextEntry={true}/>
 
-                <Button title='Sign Up' />
+                <Button title='Sign Up' onPress={onSignUp}/>
 
                 <Text style ={{textAlign: 'center', marginTop: 40}}>
                     У Вас есть аккаунта? <Text style={{color: 'blue'}} onPress={()=>navigation.goBack()}>Sign In</Text>
