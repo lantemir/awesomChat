@@ -1,7 +1,9 @@
 import { useLayoutEffect, useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native";
 import Input from "../common/Input";
 import Button from "../common/Button";
+import api from "../core/api";
+import utils from "../core/utils";
 
 function SignUpScreen ({navigation}) {
 
@@ -55,11 +57,35 @@ function SignUpScreen ({navigation}) {
             return 
         }
 
-        console.log("onSignUp")
+        api({
+            method: 'POST',     
+            url: "api/signup/",       
+            data: {
+                username: username,
+                first_name: firstName,
+                last_name: lastName,
+                password: password1  
+            }            
+        })
+        .then(response => {
+            utils.log('Sign up', response.data)
+        })
+        .catch(error => {
+            console.log(error)
+            if (error.response) {               
+                console.log(error.response.data);              
+              } else if (error.request) {               
+                console.log(error.request);
+              } else {               
+                console.log('Error', error.message);
+              }
+        })
     }
 
     return(
         <SafeAreaView style={{flex: 1}}> 
+        <KeyboardAvoidingView behavior="height" style={{flex: 1}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
            <View style={{flex:1, justifyContent: 'center', paddingHorizontal: 16}}>
                 <Text style={{textAlign:'center', marginBottom: 24, fontSize:36, fontWeight: 'bold'}}>
                     Sign Up
@@ -79,6 +105,8 @@ function SignUpScreen ({navigation}) {
                 
 
            </View>
+           </TouchableWithoutFeedback>
+           </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }

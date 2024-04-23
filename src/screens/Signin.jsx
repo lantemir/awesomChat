@@ -1,10 +1,13 @@
 
 import { useLayoutEffect, useState } from "react";
-import { SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Keyboard, SafeAreaView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, KeyboardAvoidingView } from "react-native";
 import Title from "../common/Title";
 import { useFonts } from 'expo-font';
 import Input from "../common/Input";
 import Button from "../common/Button";
+import api from "../core/api";
+
+import  utils from '../core/utils'; 
 
 
 
@@ -48,16 +51,41 @@ function SignInScreen ({navigation}) {
     
         if (failUsername || failPassword) {
             return
-        }
+        }      
+        
+
+        api({
+            method: 'POST',     
+            url: "api/signin/",       
+            data: {
+                username: username,
+                password: password
+            }            
+        })
+        .then(response => {
+            utils.log('Sign in', response.data)
+        })
+        .catch(error => {
+            console.log(error)
+            if (error.response) {               
+                console.log(error.response.data);              
+              } else if (error.request) {               
+                console.log(error.request);
+              } else {               
+                console.log('Error', error.message);
+              }
+        })
     }
 
     return(
         <SafeAreaView style={{ flex: 1 }}>
+            <KeyboardAvoidingView behavior="height" style={{flex: 1}}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 20}}>
                 <Title text='RealtimeChat' color='#202020' />
 
                 <Input title='Username' value={username} setValue={setUsername} error={usernameError} setError={setUsernameError}/>
-                <Input title='Password' value={password} setValue={setpassword} error={passwordError} setError={setpasswordError}/>
+                <Input secureTextEntry={true} title='Password' value={password} setValue={setpassword} error={passwordError} setError={setpasswordError}/>
 
                 {/* <Button title='Sign in' /> */}
                 <Button title='Sign in' onPress ={onSignIn}/>
@@ -68,6 +96,8 @@ function SignInScreen ({navigation}) {
                 </Text>
                
             </View>
+            </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }
