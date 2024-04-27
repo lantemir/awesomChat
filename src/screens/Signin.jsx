@@ -8,6 +8,7 @@ import Button from "../common/Button";
 import api from "../core/api";
 
 import  utils from '../core/utils'; 
+import useGlobal from "../core/global";
 
 
 
@@ -19,6 +20,8 @@ function SignInScreen ({navigation}) {
 
     const [usernameError, setUsernameError] = useState('')
     const [passwordError, setpasswordError] = useState('')
+
+    const login = useGlobal(state => state.login)
  
     useLayoutEffect(() =>{
         navigation.setOptions(
@@ -64,6 +67,14 @@ function SignInScreen ({navigation}) {
         })
         .then(response => {
             utils.log('Sign in', response.data)
+            const credentials = {
+                username: username,
+                password: password
+            }
+     
+            login(
+                credentials, response.data.user
+            )
         })
         .catch(error => {
             console.log(error)

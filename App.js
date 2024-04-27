@@ -11,7 +11,9 @@ import SignInScreen from './src/screens/Signin';
 import HomeScreen from './src/screens/Home';
 import SearchScreen from './src/screens/Search';
 import MessageScreen from './src/screens/Message';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import useGlobal from './src/core/global';
 
 const LightTheme  ={
   ...DefaultTheme,
@@ -25,8 +27,18 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 
-  const [initialized] = useState(true)
-  const [authenticated] = useState(false)
+  // const [initialized] = useState(true)
+  //const [authenticated] = useState(false)
+
+
+  const initialized = useGlobal( state => state.initialized )
+  const authenticated = useGlobal( state => state.authenticated)
+
+  const init = useGlobal(state => state.init)
+
+  useEffect(() => {
+    init()
+  }, [])
 
   return (
     <NavigationContainer theme={LightTheme}>
