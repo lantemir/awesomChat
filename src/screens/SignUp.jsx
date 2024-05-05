@@ -77,7 +77,7 @@ function SignUpScreen ({navigation}) {
                 username: username,
                 password: password1
             }
-            login(credentials, response.data.user)
+            login(credentials, response.data, response.data.tokens)
         })
         .catch(error => {
             console.log(error)

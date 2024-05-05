@@ -1,15 +1,24 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { SafeAreaView, Text, Touchable, TouchableOpacity, View, Image } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import RequestsScreen from "./Requests";
 import FriendsScreen from "./Friends";
 import ProfileScreen from "./Profile";
+import useGlobal from "../core/global";
+import Thumbnail from "../common/Thumbnail";
 
 const Tab = createBottomTabNavigator();
 
 
 function HomeScreen ({navigation}) {
+
+  const socketConnect  = useGlobal(state => state.socketConnect)
+  const socketClose = useGlobal(state => state.socketClose)
+  const user = useGlobal(state => state.user)
+
+  console.log("userHomeScreen", user)
+  console.log("user?.profile?.avatar@@@" , user?.profile?.avatar)
 
     useLayoutEffect(() =>{
         navigation.setOptions(
@@ -19,14 +28,26 @@ function HomeScreen ({navigation}) {
         )
     },[])
 
+    useEffect(() => {
+      socketConnect()
+      return () => {
+        socketClose()
+      }
+    },[])
+
     return(
       <Tab.Navigator
         screenOptions={({route, navigation}) => ({
           headerLeft: () => (
             <View style={{marginLeft: 16, borderRadius: 24, backgroundColor: '#e0e0e0'}}>
-              <Image source={require('../assets/user.png')} 
+              {/* <Image source={require('../assets/user.png')} 
                 style={{width: 28, height: 28 }}
-              />
+              /> */}
+               <Thumbnail 
+                url={user && user?.profile?.avatar}
+                size={28}
+            />
+
             </View>
           ),
           headerRight: () =>(

@@ -1,4 +1,7 @@
+import { Platform } from "react-native"
+import ProfileImage from '../assets/user.png'
 
+// import { ADDRESSNOSLASH } from "./api"
 
 function log () {
     for (let i = 0; i < arguments.length; i++) {
@@ -10,4 +13,16 @@ function log () {
     }
 }
 
-export default {log}
+function thumbnail(url) {
+
+   
+    if(!url) {
+        return ProfileImage
+    }
+    return {
+        
+        uri: 'http://' + '192.168.1.46:8000' + url
+    }
+}
+
+export default {log, thumbnail}

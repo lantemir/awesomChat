@@ -3,17 +3,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import useGlobal from "../core/global";
 import * as ImagePicker from 'expo-image-picker';
+import utils from "../core/utils";
+import Thumbnail from "../common/Thumbnail";
 
 
 
 function ProfileImage () {
+    const uploadThumbnail = useGlobal(state => state.uploadThumbnail)
+    const user = useGlobal(state => state.user)
+
+    console.log("userProfileImage@@@", user)
 
     const handlePress = async () => {
         try {
           const result = await ImagePicker.launchImageLibraryAsync({base64: true});
           if (!result.cancelled) {
-            console.log('launchImageLibrary', result);
+            //console.log('launchImageLibrary', result);
             const file = result.assets[0]
+           
+
+            uploadThumbnail(file)
           } else {
             console.log('Image selection cancelled');
             return;
@@ -29,9 +38,9 @@ function ProfileImage () {
             
             onPress={handlePress}
             >
-            <Image 
-                source={require('../assets/user.png')}
-                style={{width: 180, height: 180, borderRadius: 90, backgroundColor: '#e0e0e0' }}
+            <Thumbnail 
+                url={user.profile?.avatar}
+                size={180}
             />
             <View 
                 style={{
@@ -94,7 +103,10 @@ function ProfileLogout () {
 
 
 function ProfileScreen () {
-    const user = useGlobal((state) => state.user)
+  
+    const user = useGlobal(state => state.user)
+
+    console.log("userProfileScreen", user)
     return(
         <View style={{
             flex: 1,
@@ -112,14 +124,14 @@ function ProfileScreen () {
                     marginBottom: 6
                 }}
             >
-                {user.name}
+                {user?.user?.name}
             </Text>
             <Text style={{
                 textAlign:'center',
                 color: '#606060',
                 fontSize: 14
             }}>
-                @{user.username}
+                @{user?.user?.username}
             </Text>
 
             <ProfileLogout/>

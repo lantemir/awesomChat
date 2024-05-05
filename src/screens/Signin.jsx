@@ -73,7 +73,9 @@ function SignInScreen ({navigation}) {
             }
      
             login(
-                credentials, response.data.user
+                credentials, 
+                response.data,
+                response.data.tokens
             )
         })
         .catch(error => {
