@@ -5,6 +5,53 @@ import  utils from '../core/utils';
 
 // Socker receive message handler
 
+function responseRequestConnect(set, get, connection) {
+
+    const userdata = get().user
+    console.log("responseRequestConnectUSER@", userdata)
+    //If i was the one that made the connect request, update the search list now    
+    if(userdata.user.username === connection.sender.username){
+        const searchList = [...get().searchList]
+        const searchIndex = searchList.findIndex(
+            request => request.username === connection.receiver.username
+        )
+        console.log("searchList!@", searchList)
+        console.log("searchIndex@@", searchIndex)
+        if(searchIndex >=0) {
+            searchList[searchIndex].status = 'pending-them'
+            set((state) => ({
+                searchList: searchList
+            }))
+        }
+
+    //If they were the one that sent the connect request add request to request list
+    } else {
+        const requestList = [...get().requestList]
+        const requestIndex = requestList.findIndex(
+            request => request.sender.username === connection.sender.username
+        )
+        if(requestIndex === -1) {
+            requestList.unshift(connection)
+            set((state) => ({
+                requestList: requestList
+            }))
+        }
+    }
+}
+
+function responseRequestList(set,get, requestList) {
+    set((state) => ({
+        requestList: requestList
+    }))
+}
+
+function responseSearch(set, get, data) {
+    set((state) => ({
+        searchList:data
+    }))
+}
+
+
 function responseThumbnail(set,get, data) {
     set((state) => ({
         user:data
@@ -96,6 +143,9 @@ const useGlobal = create((set, get) => ({
         )
         socket.onopen = () => {
             utils.log('socket.onopen')
+            socket.send(JSON.stringify({
+                source: 'request.list'
+            }))
         }
         socket.onmessage = (event) => {
             //utils.log('socket.onmessage')
@@ -105,6 +155,9 @@ const useGlobal = create((set, get) => ({
             //debug log formated data
             utils.log('onmessage:', parsed)
             const response = {
+                'request.connect': responseRequestConnect,
+                'request.list': responseRequestList,
+                'search': responseSearch,
                 'thumbnail': responseThumbnail
             }
             const resp = response[parsed.source]
@@ -139,6 +192,42 @@ const useGlobal = create((set, get) => ({
             socket: null
         }))
     },
+
+    //Search
+    searchList: null,
+
+    searchUsers: (query) => {
+        if(query) {
+            const socket = get().socket
+            socket.send(JSON.stringify({
+                source: 'search',
+                query: query
+            }))
+        } else {
+            set((state)=>({
+                searchList: null
+            }))
+        }
+    },
+
+     //Requests
+     requestList: null,
+
+     requestAccept: (username) => {
+        const socket = get().socket
+        socket.send(JSON.stringify({
+            source: 'request.accept',
+            username: username            
+        }))
+     },
+
+     requestConnect: (username) => {
+        const socket = get().socket
+        socket.send(JSON.stringify({
+            source: 'request.connect',
+            username: username            
+        }))
+     },
 
     //Thumbnail
     uploadThumbnail: (file) => {
