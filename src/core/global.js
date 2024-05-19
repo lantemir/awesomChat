@@ -5,6 +5,26 @@ import  utils from '../core/utils';
 
 // Socker receive message handler
 
+function responseRequestAccept(set, get, connection) {
+    const user = get().user
+    // If I was the one that accepted the request, remove
+    // request from the requestList
+    console.log("responseRequestAcceptUser@@@", user)
+    console.log("responseRequestAcceptconnection@@@", connection)
+    if(user.user.username === connection.receiver.username) {
+        const requestList = [...get().requestList]
+        const requestIndex = requestList.findIndex(
+            request => request.id === connection.id
+        )
+        if(requestIndex >=0) {
+            requestList.splice(requestIndex, 1)
+            set((state) => ({
+                requestList: requestList
+            }))
+        }
+    }
+}
+
 function responseRequestConnect(set, get, connection) {
 
     const userdata = get().user
@@ -12,7 +32,7 @@ function responseRequestConnect(set, get, connection) {
     //If i was the one that made the connect request, update the search list now    
     if(userdata.user.username === connection.sender.username){
         const searchList = [...get().searchList]
-        const searchIndex = searchList.findIndex(
+        const searchIndex = searchList.findIndex( 
             request => request.username === connection.receiver.username
         )
         console.log("searchList!@", searchList)
@@ -40,6 +60,7 @@ function responseRequestConnect(set, get, connection) {
 }
 
 function responseRequestList(set,get, requestList) {
+    
     set((state) => ({
         requestList: requestList
     }))
@@ -83,8 +104,7 @@ const useGlobal = create((set, get) => ({
                 }
 
                 const user =response.data
-                console.log("response.data@@@" , response.data)
-                console.log("userINIT@@@" , user)
+                
                 const tokens = response.data.tokens
 
                 secure.set('tokens', tokens)
@@ -144,7 +164,8 @@ const useGlobal = create((set, get) => ({
         socket.onopen = () => {
             utils.log('socket.onopen')
             socket.send(JSON.stringify({
-                source: 'request.list'
+                source: 'request.list',
+                type: 'request.list'
             }))
         }
         socket.onmessage = (event) => {
@@ -155,6 +176,7 @@ const useGlobal = create((set, get) => ({
             //debug log formated data
             utils.log('onmessage:', parsed)
             const response = {
+                'request.accept': responseRequestAccept,
                 'request.connect': responseRequestConnect,
                 'request.list': responseRequestList,
                 'search': responseSearch,
@@ -201,7 +223,8 @@ const useGlobal = create((set, get) => ({
             const socket = get().socket
             socket.send(JSON.stringify({
                 source: 'search',
-                query: query
+                query: query,
+                type: 'search'
             }))
         } else {
             set((state)=>({
@@ -217,7 +240,8 @@ const useGlobal = create((set, get) => ({
         const socket = get().socket
         socket.send(JSON.stringify({
             source: 'request.accept',
-            username: username            
+            username: username,
+            type: 'request.accept',            
         }))
      },
 
@@ -225,7 +249,8 @@ const useGlobal = create((set, get) => ({
         const socket = get().socket
         socket.send(JSON.stringify({
             source: 'request.connect',
-            username: username            
+            username: username,
+            type: 'request.connect'            
         }))
      },
 
@@ -235,7 +260,8 @@ const useGlobal = create((set, get) => ({
         socket.send(JSON.stringify({
             source: 'thumbnail',
             base64: file.base64,
-            filename: file.fileName
+            filename: file.fileName,
+            type: 'thumbnail'
         }))
 
     }

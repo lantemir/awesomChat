@@ -7,6 +7,8 @@ import Thumbnail from "../common/Thumbnail";
 function RequestAccept ({item}) {
     const requestAccept = useGlobal((state) => state.requestAccept)
 
+    console.log("item.sender.username@@@", item.sender.username)
+
     return(
         <TouchableOpacity 
             style={{
@@ -16,7 +18,7 @@ function RequestAccept ({item}) {
                 borderRadius: 18,
                 alignItems: 'center',
                 justifyContent: 'center'
-            }}
+            }}         
             onPress={()=> requestAccept(item.sender.username)}
         >
             <Text style={{color: 'white', fontWeight: 'bold'}}>Accept</Text>
@@ -28,12 +30,12 @@ function RequestAccept ({item}) {
 function RequestRow({ item }) {
     const message = 'Requested to connect with you'
     const time = '7m ago'
+    console.log("RequestRowItem@@@", item)
 
-    console.log("RequestRowItem!!!@@@" , item)
     return (
         <Cell>
             <Thumbnail
-                url={item?.profile?.avatar}
+                url={item?.senderprofile?.avatar}
                 size={76}
             />
             <View

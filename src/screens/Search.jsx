@@ -8,6 +8,8 @@ import Cell from "../common/Cell";
 
 
 function SearchButton ({user}) {
+
+    console.log("SearchButton_user@@@", user)
     //Add tick if user already connected
     if (user.status === 'connected') {
         return (

@@ -4,8 +4,7 @@ import utils from "../core/utils"
 
 function Thumbnail ({url, size}) {
 
-    console.log("url@@@", url)
-    console.log("size@@@", size)
+   
     return(
         <Image 
                 source={utils.thumbnail(url)}

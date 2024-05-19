@@ -17,8 +17,7 @@ function HomeScreen ({navigation}) {
   const socketClose = useGlobal(state => state.socketClose)
   const user = useGlobal(state => state.user)
 
-  console.log("userHomeScreen", user)
-  console.log("user?.profile?.avatar@@@" , user?.profile?.avatar)
+  
 
     useLayoutEffect(() =>{
         navigation.setOptions(
@@ -29,6 +28,7 @@ function HomeScreen ({navigation}) {
     },[])
 
     useEffect(() => {
+      console.log("HomeScreen useEffect@@@")
       socketConnect()
       return () => {
         socketClose()
