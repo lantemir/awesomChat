@@ -3,14 +3,34 @@ import secure from './secure'
 import api, { ADDRESS } from './api'
 import  utils from '../core/utils'; 
 
-// Socker receive message handler
+// Socket receive message handler
+
+function responseFriendList(set, get, friendList) {
+    set((state) => ({
+        friendList: friendList
+    }))
+}
+
+function responseMessageList(set, get, data) {
+    set((state) => ({
+        messagesList: [...get().messagesList, ...data.messages]
+    }))
+}
+
+function responseMessageSend(set, get, data) {
+    const messagesList =  [data.message, ...get().messagesList]
+    set((state) => ({
+        messagesList: messagesList
+    }))
+}
 
 function responseRequestAccept(set, get, connection) {
     const user = get().user
     // If I was the one that accepted the request, remove
     // request from the requestList
-    console.log("responseRequestAcceptUser@@@", user)
-    console.log("responseRequestAcceptconnection@@@", connection)
+    console.log("responseRequestAcceptUser@@@: ", user)
+    console.log("responseRequestAcceptconnection@@@: ", connection)
+  
     if(user.user.username === connection.receiver.username) {
         const requestList = [...get().requestList]
         const requestIndex = requestList.findIndex(
@@ -23,6 +43,13 @@ function responseRequestAccept(set, get, connection) {
             }))
         }
     }
+   // моё решение
+    const socket = get().socket
+    socket.send(JSON.stringify({
+        
+        source: 'friend.list',
+        type: 'friend.list'
+    }))
 }
 
 function responseRequestConnect(set, get, connection) {
@@ -167,6 +194,10 @@ const useGlobal = create((set, get) => ({
                 source: 'request.list',
                 type: 'request.list'
             }))
+            socket.send(JSON.stringify({
+                source: 'friend.list',
+                type: 'friend.list'
+            }))
         }
         socket.onmessage = (event) => {
             //utils.log('socket.onmessage')
@@ -176,6 +207,9 @@ const useGlobal = create((set, get) => ({
             //debug log formated data
             utils.log('onmessage:', parsed)
             const response = {
+                'friend.list': responseFriendList,
+                'message.list': responseMessageList,
+                'message.send': responseMessageSend,
                 'request.accept': responseRequestAccept,
                 'request.connect': responseRequestConnect,
                 'request.list': responseRequestList,
@@ -232,6 +266,40 @@ const useGlobal = create((set, get) => ({
             }))
         }
     },
+
+     //Friends
+     friendList: null,
+
+      //Messages
+
+      messagesList: [],
+
+      messageList: (connectionId, page=0) => {
+        if( page === 0){
+            set((state) => ({
+                messagesList: [],
+            }))
+        }
+        const socket = get().socket
+        socket.send(JSON.stringify({
+            source: 'message.list',
+            connectionId: connectionId,
+            page: page,
+            type: 'message.list',            
+        }))
+     },
+
+
+     //Messages
+     messageSend: (connectionId, message) => {
+        const socket = get().socket
+        socket.send(JSON.stringify({
+            source: 'message.send',
+            connectionId: connectionId,
+            message: message,
+            type: 'message.send',            
+        }))
+     },
 
      //Requests
      requestList: null,
