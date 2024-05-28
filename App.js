@@ -37,7 +37,6 @@ export default function App() {
   const init = useGlobal(state => state.init)
 
   useEffect(() => {
-    console.log("useEffect App@@@")
     init()
   }, [])
 

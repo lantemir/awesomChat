@@ -3,11 +3,10 @@ import useGlobal from "../core/global";
 import Empty from "../common/Empty";
 import Cell from "../common/Cell";
 import Thumbnail from "../common/Thumbnail";
+import utils from "../core/utils";
 
 function RequestAccept ({item}) {
-    const requestAccept = useGlobal((state) => state.requestAccept)
-
-    console.log("item.sender.username@@@", item.sender.username)
+    const requestAccept = useGlobal((state) => state.requestAccept)   
 
     return(
         <TouchableOpacity 
@@ -29,8 +28,7 @@ function RequestAccept ({item}) {
 
 function RequestRow({ item }) {
     const message = 'Requested to connect with you'
-    const time = '7m ago'
-    console.log("RequestRowItem@@@", item)
+  
 
     return (
         <Cell>
@@ -58,7 +56,7 @@ function RequestRow({ item }) {
                         color: '#606060',
                     }}
                 >
-                    {message} <Text style={{color: "#909090", fontSize:13}}>{time}</Text>
+                    {message} <Text style={{color: "#909090", fontSize:13}}>{utils.formatTime(item.created)}</Text>
                 </Text>
 
             </View>

@@ -3,46 +3,12 @@ import Cell from "../common/Cell";
 import Empty from "../common/Empty";
 import useGlobal from "../core/global";
 import Thumbnail from "../common/Thumbnail";
+import utils from "../core/utils";
 
-function formatTime (date) {
-    if(date === null) {
-        return '-'
-    }
-    const now = new Date()
-    const s = Math.abs(now - new Date(date)) / 1000
-    // Seconds
-    if(s<60) {
-        return 'now'
-    }
-    // Minutes
-    if( s < 60*60) {
-        const m = Math.floor(s / 60)
-        return `${m}m ago`
-    }
-    //hours
-    if(s < 60*60*24){
-        const h = Math.floor(s/ (60*60))
-        return `${h}h ago`
-    }
-    // Days
-    if(s < 60*60*24*7){
-        const d = Math.floor(s/ (60*60*24))
-        return `${d}d ago`
-    }
-    // Weeks
-    if(s < 60*60*24*7*4){
-        const w = Math.floor(s/ (60*60*24*7))
-        return `${w}w ago`
-    }
-    // Year
-    if(s < 60*60*24*7*4){
-        const y = Math.floor(s/ (60*60*24*365))
-        return `${y}y ago`
-    }
-}
+
 
 function FriendRow ({navigation, item}) {
-    console.log("FriendRow@@@: ", item )
+  
     return(
         <TouchableOpacity onPress={()=>{
             navigation.navigate('Messages', item)
@@ -72,7 +38,7 @@ function FriendRow ({navigation, item}) {
                     color: '#606060',
                 }}
             >
-                {item.preview} <Text style={{color: "#909090", fontSize:13}}>{formatTime(item.updated)}</Text>
+                {item.preview} <Text style={{color: "#909090", fontSize:13}}>{utils.formatTime(item.updated)}</Text>
             </Text>
 
         </View>

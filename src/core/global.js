@@ -11,25 +11,64 @@ function responseFriendList(set, get, friendList) {
     }))
 }
 
-function responseMessageList(set, get, data) {
+function responseFriendNew(set, get, friend) {
+    const friendList = [friend, ...get().friendList]
     set((state) => ({
-        messagesList: [...get().messagesList, ...data.messages]
+        friendList: friendList
+    }))
+}
+
+function responseMessageList(set, get, data) {    
+    set((state) => ({
+        messagesList: [...get().messagesList, ...data.messages],
+        messagesNext: data.next[0],
+        messagesUsername: data.friend.username
     }))
 }
 
 function responseMessageSend(set, get, data) {
+    const username = data.friend.username
+    //Move friendlist item for this friend to the start of list, update the preview text and update time stamp
+    const friendList = [...get().friendList]
+    const friendIndex = friendList.findIndex(
+        item => item.friend.username === username
+    )
+    if (friendIndex >= 0 ) {
+        const item = friendList[friendIndex]
+        item.preview = data.message.text
+        item.updated = data.message.created
+        friendList.splice(friendIndex, 1)
+        friendList.unshift(item)
+        set((state) => ({
+            friendList: friendList
+        }))
+    }
+    //If message data does not belong to this friend then dont update the message list, as a fresh messageList
+    // will be loaded next time the user opens the correct chat window
+    if(username !== get().messagesUsername){
+        return
+    }
+
     const messagesList =  [data.message, ...get().messagesList]
+
     set((state) => ({
-        messagesList: messagesList
+        messagesList: messagesList,
+        messagesTyping: null
     }))
+}
+
+function responseMessageType(set, get, data) {
+    if(data.username !== get().messagesUsername) return
+    set((state) => ({    
+            messagesTyping: new Date()
+        }))
+    
 }
 
 function responseRequestAccept(set, get, connection) {
     const user = get().user
     // If I was the one that accepted the request, remove
-    // request from the requestList
-    console.log("responseRequestAcceptUser@@@: ", user)
-    console.log("responseRequestAcceptconnection@@@: ", connection)
+    // request from the requestList  
   
     if(user.user.username === connection.receiver.username) {
         const requestList = [...get().requestList]
@@ -43,27 +82,25 @@ function responseRequestAccept(set, get, connection) {
             }))
         }
     }
-   // моё решение
-    const socket = get().socket
-    socket.send(JSON.stringify({
+   // моё решение добавление друга
+    // const socket = get().socket
+    // socket.send(JSON.stringify({
         
-        source: 'friend.list',
-        type: 'friend.list'
-    }))
+    //     source: 'friend.list',
+    //     type: 'friend.list'
+    // }))
 }
 
 function responseRequestConnect(set, get, connection) {
 
-    const userdata = get().user
-    console.log("responseRequestConnectUSER@", userdata)
+    const userdata = get().user   
     //If i was the one that made the connect request, update the search list now    
     if(userdata.user.username === connection.sender.username){
         const searchList = [...get().searchList]
         const searchIndex = searchList.findIndex( 
             request => request.username === connection.receiver.username
         )
-        console.log("searchList!@", searchList)
-        console.log("searchIndex@@", searchIndex)
+      
         if(searchIndex >=0) {
             searchList[searchIndex].status = 'pending-them'
             set((state) => ({
@@ -208,8 +245,10 @@ const useGlobal = create((set, get) => ({
             utils.log('onmessage:', parsed)
             const response = {
                 'friend.list': responseFriendList,
+                'friend.new': responseFriendNew,
                 'message.list': responseMessageList,
                 'message.send': responseMessageSend,
+                'message.type': responseMessageType,
                 'request.accept': responseRequestAccept,
                 'request.connect': responseRequestConnect,
                 'request.list': responseRequestList,
@@ -273,11 +312,23 @@ const useGlobal = create((set, get) => ({
       //Messages
 
       messagesList: [],
+      messagesNext: null,
+      messagesTyping: null,
+      messagesUsername: null,
 
       messageList: (connectionId, page=0) => {
+  
         if( page === 0){
             set((state) => ({
                 messagesList: [],
+                messagesNext: null,
+                messagesTyping: null,
+                messagesUsername: null
+            }))
+        } 
+        else {
+            set((state) => ({                
+                messagesNext: null          
             }))
         }
         const socket = get().socket
@@ -298,6 +349,15 @@ const useGlobal = create((set, get) => ({
             connectionId: connectionId,
             message: message,
             type: 'message.send',            
+        }))
+     },
+
+     messageType: (username) => {
+        const socket = get().socket
+        socket.send(JSON.stringify({
+            source: 'message.type',
+            username: username,        
+            type: 'message.type',            
         }))
      },
 

@@ -28,7 +28,7 @@ function HomeScreen ({navigation}) {
     },[])
 
     useEffect(() => {
-      console.log("HomeScreen useEffect@@@")
+     
       socketConnect()
       return () => {
         socketClose()

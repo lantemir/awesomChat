@@ -9,7 +9,7 @@ import Cell from "../common/Cell";
 
 function SearchButton ({user}) {
 
-    console.log("SearchButton_user@@@", user)
+   
     //Add tick if user already connected
     if (user.status === 'connected') {
         return (
@@ -116,38 +116,11 @@ function SearchScreen () {
     const searchList = useGlobal(state => state.searchList)
     const searchUsers = useGlobal(state => state.searchUsers)
 
-    console.log("query@@@", query)
+  
 
     useEffect(()=> {
         searchUsers(query)
-    },[query])
-
-    // const searchList = [
-    //     {
-    //         thumbnail: null,
-    //         name: "Silly Name",
-    //         username: "Sillyna",
-    //         status: 'pending-them'
-    //     },
-    //     {
-    //         thumbnail: null,
-    //         name: "Silly Somthing",
-    //         username: "Sillynb",
-    //         status: 'pending-me'
-    //     },
-    //     {
-    //         thumbnail: null,
-    //         name: "Silly Red",
-    //         username: "Sillync",
-    //         status: 'connected'
-    //     },
-    //     {
-    //         thumbnail: null,
-    //         name: "Silly Blue",
-    //         username: "Sillynd",
-    //         status: 'no-connection'
-    //     }
-    // ]
+    },[query])   
 
     return(
         <SafeAreaView style={{

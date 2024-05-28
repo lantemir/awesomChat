@@ -39,8 +39,7 @@ function SignInScreen ({navigation}) {
     }   
     
 
-    function onSignIn() {
-        console.log('Onsign', username, password)
+    function onSignIn() {        
 
         const failUsername = !username
         if (failUsername) {

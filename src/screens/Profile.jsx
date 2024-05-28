@@ -12,15 +12,13 @@ function ProfileImage () {
     const uploadThumbnail = useGlobal(state => state.uploadThumbnail)
     const user = useGlobal(state => state.user)
 
-    console.log("userProfileImage@@@", user)
 
     const handlePress = async () => {
         try {
           const result = await ImagePicker.launchImageLibraryAsync({base64: true});
           if (!result.cancelled) {
-            //console.log('launchImageLibrary', result);
-            const file = result.assets[0]
-           
+       
+            const file = result.assets[0]           
 
             uploadThumbnail(file)
           } else {
@@ -106,7 +104,6 @@ function ProfileScreen () {
   
     const user = useGlobal(state => state.user)
 
-    console.log("userProfileScreen", user)
     return(
         <View style={{
             flex: 1,
