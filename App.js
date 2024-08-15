@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, AppState } from 'react-native';
 
 import './src/core/fontawesome';
 
@@ -36,9 +36,32 @@ export default function App() {
 
   const init = useGlobal(state => state.init)
 
+  const socketConnect = useGlobal(state => state.socketConnect)
+  const socketClose = useGlobal(state => state.socketClose)
+
+  const [appState, setAppState] = useState(AppState.currentState)
+
   useEffect(() => {
-    init()
-  }, [])
+    init();
+
+    const handleAppStateChange = (nextAppState) => {
+      if (appState.match(/inactive|background/) && nextAppState === 'active') {
+        // Приложение снова активно - подключаемся к WebSocket
+        socketConnect();
+      } else if (nextAppState.match(/inactive|background/)) {
+        // Приложение уходит в фон или становится неактивным - отключаемся от WebSocket
+        socketClose();
+      }
+      setAppState(nextAppState)
+    }
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subscription.remove();
+    }
+
+  }, [appState])
 
   return (
     <NavigationContainer theme={LightTheme}>

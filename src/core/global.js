@@ -145,6 +145,23 @@ function responseThumbnail(set,get, data) {
 
 
 const useGlobal = create((set, get) => ({
+
+    // testApi: async () => {
+    //     console.log("testApi")
+    //     try{
+    //         const response = await api({
+    //             method: 'POST',   
+    //             url: "api/testApi/",
+    //             data: {
+    //                 testim: "qwe"
+    //             }
+    //         })
+    //         console.log("response_testApi!!!@@@ " , response.data)
+
+    //     }catch (error) {
+    //         console.log('UseGlobal.testApi', error)
+    //     }
+    // },
  
     //Initializacion
     initialized: false,
@@ -223,7 +240,7 @@ const useGlobal = create((set, get) => ({
         const tokens = await secure.get('tokens')
 
         const socket = new WebSocket(
-            `ws://${ADDRESS}chat/?token=${tokens.access}`
+            `wss://${ADDRESS}chat/?token=${tokens.access}`
         )
         socket.onopen = () => {
             utils.log('socket.onopen')
