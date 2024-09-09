@@ -79,7 +79,7 @@ function RequestsScreen () {
     //Show empty if no reqests
     if (requestList.length === 0) {
         return (
-            <Empty icon='bell' message='No requests'/>
+            <Empty icon='bell' message='Нет запросов'/>
         )
     }
 

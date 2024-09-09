@@ -43,12 +43,12 @@ function SignInScreen ({navigation}) {
 
         const failUsername = !username
         if (failUsername) {
-            setUsernameError('UserName not provided')
+            setUsernameError('Имя пользователя не указано')
         }
     
         const failPassword = !password
         if (failPassword) {
-            setpasswordError('Password not provided')
+            setpasswordError('Пароль не указан')
         }
     
         if (failUsername || failPassword) {
@@ -78,13 +78,23 @@ function SignInScreen ({navigation}) {
             )
         })
         .catch(error => {
-            console.log(error)
+            console.log("sign in", error)
             if (error.response) {               
-                console.log(error.response.data);              
+                console.log(error.response.data);
+                
+                if(error.response.status === 401) {
+                    setpasswordError("Неверный логин или пароль")
+                    setUsernameError("Неверный логин или пароль")
+                } else {
+                    setUsernameError("Произошла ошибка при входе. Пожалуйста, попробуйте еще раз.")
+                }
+
               } else if (error.request) {               
                 console.log(error.request);
+                setUsernameError("Не удалось подключиться к серверу. Пожалуйста, проверьте ваше соединение.")
               } else {               
                 console.log('Error', error.message);
+                setUsernameError("Произошла ошибка. Пожалуйста, попробуйте еще раз.")
               }
         })
     }

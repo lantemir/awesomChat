@@ -35,7 +35,9 @@
     "extra": {
       "eas": {
         "projectId": "25406ea1-29b7-484c-b8bd-9e28a45dce71"
-      }
+      },
+      "devBaseUrl": "192.168.1.46:8000/",
+      "prodBaseUrl": "lan888developer.kz/"
     }
   }
 }

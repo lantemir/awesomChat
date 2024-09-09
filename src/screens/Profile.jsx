@@ -92,7 +92,7 @@ function ProfileLogout () {
                 fontWeight: 'bold',
                 color: '#d0d0d0'
             }}>
-                Log out
+                Выйти
             </Text>
         </TouchableOpacity>
         
